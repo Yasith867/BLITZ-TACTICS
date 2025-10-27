@@ -1,0 +1,39 @@
+modules = ["rust-1.86", "nodejs-20", "rust-stable"]
+[agent]
+expertMode = true
+
+[nix]
+channel = "stable-25_05"
+packages = ["protobuf"]
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "BLITZ TACTICS Frontend"
+
+[[workflows.workflow]]
+name = "BLITZ TACTICS Frontend"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd blitz-tactics/frontend && npm run dev"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 39067
+externalPort = 3000
