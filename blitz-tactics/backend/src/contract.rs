@@ -156,6 +156,21 @@ impl Contract for BlitzTacticsContract {
                     .expect("Missing signer");
 
                 if let Some(mut game) = self.state.get_match_for_player(&owner).await {
+                    // Check if game is already finished
+                    if game.game_phase == GamePhase::Finished {
+                        return vec![];
+                    }
+
+                    let is_player1 = game.player1.owner == owner;
+                    
+                    // Validate it's actually the caller's turn
+                    let is_correct_turn = (game.current_turn % 2 == 1 && is_player1)
+                        || (game.current_turn % 2 == 0 && !is_player1);
+                    
+                    if !is_correct_turn {
+                        return vec![];
+                    }
+
                     // Increment turn
                     game.current_turn += 1;
                     game.turn_timer = self.runtime.system_time();
