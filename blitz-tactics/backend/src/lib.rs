@@ -35,6 +35,7 @@ pub struct PlayerStats {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct GameState {
+    pub match_id: u64,
     pub player1: PlayerInGame,
     pub player2: PlayerInGame,
     pub current_turn: u8,
