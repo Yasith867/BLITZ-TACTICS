@@ -184,7 +184,20 @@ impl Contract for BlitzTacticsContract {
                     .expect("Missing signer");
 
                 if let Some(mut game) = self.state.get_match_for_player(&owner).await {
+                    // Check if game is already finished
+                    if game.game_phase == GamePhase::Finished {
+                        return vec![];
+                    }
+
                     let is_player1 = game.player1.owner == owner;
+                    
+                    // Validate turn
+                    let is_correct_turn = (game.current_turn % 2 == 1 && is_player1)
+                        || (game.current_turn % 2 == 0 && !is_player1);
+                    
+                    if !is_correct_turn {
+                        return vec![];
+                    }
                     
                     // Find attacker
                     let attacker_field = if is_player1 {
@@ -211,9 +224,6 @@ impl Contract for BlitzTacticsContract {
                             }
                         }
 
-                        // Update shared match
-                        self.state.update_match(game.clone()).await.ok();
-
                         // Check if game ended
                         if game.game_phase == GamePhase::Finished {
                             let winner_owner = if game.winner == Some(1) {
@@ -233,10 +243,18 @@ impl Contract for BlitzTacticsContract {
                                 self.state.update_player_loss(&loser).await.ok();
                             }
 
+                            // End the match
+                            let match_id = game.match_id;
+                            self.state.update_match(game.clone()).await.ok();
+                            self.state.end_match(match_id).await.ok();
+
                             return vec![Message::GameFinished {
                                 winner: winner_owner,
                                 rewards: Amount::ZERO,
                             }];
+                        } else {
+                            // Update shared match (only if game not finished)
+                            self.state.update_match(game.clone()).await.ok();
                         }
                     }
                 }
@@ -254,7 +272,20 @@ impl Contract for BlitzTacticsContract {
                     .expect("Missing signer");
 
                 if let Some(mut game) = self.state.get_match_for_player(&owner).await {
+                    // Check if game is already finished
+                    if game.game_phase == GamePhase::Finished {
+                        return vec![];
+                    }
+
                     let is_player1 = game.player1.owner == owner;
+                    
+                    // Validate turn
+                    let is_correct_turn = (game.current_turn % 2 == 1 && is_player1)
+                        || (game.current_turn % 2 == 0 && !is_player1);
+                    
+                    if !is_correct_turn {
+                        return vec![];
+                    }
 
                     // Combat logic (simplified)
                     let attacker_field = if is_player1 {
@@ -342,10 +373,7 @@ impl Contract for BlitzTacticsContract {
             }
 
             Message::GameFinished { winner, rewards } => {
-                if let Some(winner_owner) = winner {
-                    self.state.update_player_win(&winner_owner).await.ok();
-                }
-                // Increment total games
+                // Stats are already updated in the operation, just increment total games
                 let total = self.state.total_games_played.get();
                 self.state.total_games_played.set(total + 1);
             }
