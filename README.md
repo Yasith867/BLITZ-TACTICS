@@ -1,4 +1,4 @@
-# ⚡ BLITZ TACTICS - Real-Time Strategy Card Battler
+# BLITZ TACTICS - Real-Time Strategy Card Battler
 
 A cutting-edge blockchain card game built on **Linera Microchains**, showcasing instant finality, cross-chain messaging, and AI-powered gameplay.
 
@@ -50,8 +50,8 @@ This project demonstrates **ALL** major Linera features:
 
 1. **Clone the repository**
 ```bash
-git clone <your-repo-url>
-cd blitz-tactics
+git clone https://github.com/Yasith867/BLITZ-TACTICS
+cd BLITZ-TACTICS
 ```
 
 2. **Install Frontend Dependencies**
@@ -297,13 +297,6 @@ The AI uses **Linera Native Oracles** to:
 - **Buildathon Details**: [BUILDATHON.md](./BUILDATHON.md)
 - **Linera Docs**: https://linera.dev
 - **Linera GitHub**: https://github.com/linera-io/linera-protocol
-
----
-
-## 👥 Team
-
-- **Your Name** - Full-Stack Blockchain Developer
-- **Contact**: [Your Telegram] | [Your X/Twitter]
 
 ---
 
